@@ -20,10 +20,11 @@ import (
 )
 
 /*
-100101 2025-11-17 最初のバージョン
+100101 2025-11-23 最初のバージョン
+100201 2025-11-23 時間指定を時間単位（d/h/m）で指定できるように変更する
 */
 
-const Version = "100101"
+const Version = "100201"
 
 // イベントの参加者を調べ、一定数以下ならDB(eventuser)に登録する
 func main() {
@@ -81,12 +82,10 @@ func main() {
 	/// 環境変数から設定値を取得する
 	snorooms := os.Getenv("SR_ADD_EVENTUSER_NOROOMS")
 	norooms, _ := strconv.Atoi(snorooms)
-	sdtago := os.Getenv("SR_ADD_EVENTUSER_DTAGO")
-	dtago, _ := strconv.Atoi(sdtago)
-	sdtfromnow := os.Getenv("SR_ADD_EVENTUSER_DTFROMNOW")
-	dtfromnow, _ := strconv.Atoi(sdtfromnow)
+	dtago := os.Getenv("SR_ADD_EVENTUSER_DTAGO")
+	dtfromnow := os.Getenv("SR_ADD_EVENTUSER_DTFROMNOW")
 
-	log.Printf("設定値: SR_ADD_EVENTUSER_NOROOMS=%d SR_ADD_EVENTUSER_DTAGO=%d SR_ADD_EVENTUSER_DTFROMNOW=%d\n",
+	log.Printf("設定値: SR_ADD_EVENTUSER_NOROOMS=%d SR_ADD_EVENTUSER_DTAGO=%s SR_ADD_EVENTUSER_DTFROMNOW=%s\n",
 		norooms, dtago, dtfromnow)
 
 	/* 起動時パラメータの取得
