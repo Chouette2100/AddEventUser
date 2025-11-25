@@ -30,8 +30,9 @@ func addNewUser(
 	err error,
 ) {
 	var eul *EventuserList
+	var ie_in int
 	NoOfRooms := 0
-	eul, NoOfRooms, _, err = GetEventuserList(
+	eul, NoOfRooms, ie_in, err = GetEventuserList(
 		client,
 		event,
 		1,
@@ -45,13 +46,13 @@ func addNewUser(
 	}
 
 	// ルーム数が多すぎるときは次の処理に移る
-	if NoOfRooms > ie {
-		log.Printf("    イベント参加者数が多すぎます。len(*eul)=%d NoOfRooms=%d ie=%d",
-			len(*eul), NoOfRooms, ie)
+	if NoOfRooms > ie_in {
+		log.Printf("    イベント参加者数が多すぎます。len(*eul)=%d NoOfRooms=%d ie_in=%d",
+			len(*eul), NoOfRooms, ie_in)
 		return
 	} else {
-		log.Printf("    イベント参加者数が許容範囲内です。len(*eul)=%d NoOfRooms=%d ie=%d",
-			len(*eul), NoOfRooms, ie)
+		log.Printf("    イベント参加者数が許容範囲内です。len(*eul)=%d NoOfRooms=%d ie_in=%d",
+			len(*eul), NoOfRooms, ie_in)
 	}
 
 	tnow := time.Now().Truncate(time.Second)
@@ -66,7 +67,7 @@ func addNewUser(
 			err = fmt.Errorf("UpsertEventuser(): %w", err)
 			return
 		}
-		err = UpsertPoints(&eu, tstarttime)
+		err = UpsertInitialPoints(&eu, tstarttime)
 		if err != nil {
 			err = fmt.Errorf("UpsertPoints(): %w", err)
 			return

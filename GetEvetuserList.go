@@ -83,6 +83,7 @@ func GetEventuserList(
 		log.Printf("eventid=%s  ieventid=%d blockid=%d\n",
 			eventid, ieventid, blockid)
 
+		lenOfPointList = ie
 		ebr, erl := srapi.GetEventBlockRanking(client, ieventid, blockid, ib, ie)
 		if erl != nil {
 			err = fmt.Errorf("srapi.GetEventBlockRanking(): %w", erl)
@@ -108,9 +109,12 @@ func GetEventuserList(
 		eul = (*EventuserList)(&eua)
 	} else {
 		// ブロックイベントでないとき（通常のイベント、レベルイベント）
-		eqr, erl := srapi.GetEventQuestRoomsByApi(client, event.Eventid, ib, ie)
+		// eqr, erl := srapi.GetEventQuestRoomsByApi(client, event.Eventid, ib, ie)
+		lenOfPointList = ie
+		eqr, erl := srapi.GetEventRoomsByApi(client, event.Eventid, ib, ie)
 		if erl != nil {
-			err = fmt.Errorf("srapi.GetEventQuestRoomsByApi(): %w", erl)
+			// err = fmt.Errorf("srapi.GetEventQuestRoomsByApi(): %w", erl)
+			err = fmt.Errorf("srapi.GetEventRoomsByApi(): %w", erl)
 			return
 		}
 		// イベント参加者数を取得する
@@ -118,8 +122,10 @@ func GetEventuserList(
 		eventinfo.Noentry = NoOfRooms
 		srdblib.Dbmap.Update(&eventinfo)
 
-		eua := make([]srdblib.Eventuser, len(eqr.EventQuestLevelRanges[0].Rooms))
-		for i, qr := range eqr.EventQuestLevelRanges[0].Rooms {
+		// eua := make([]srdblib.Eventuser, len(eqr.EventQuestLevelRanges[0].Rooms))
+		// for i, qr := range eqr.EventQuestLevelRanges[0].Rooms {
+		eua := make([]srdblib.Eventuser, len(eqr.Rooms))
+		for i, qr := range eqr.Rooms {
 			eua[i].Eventid = event.Eventid
 			eua[i].Userno = qr.RoomID
 			eua[i].Istarget = "Y"

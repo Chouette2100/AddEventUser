@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -22,9 +23,11 @@ import (
 /*
 100101 2025-11-23 最初のバージョン
 100201 2025-11-23 時間指定を時間単位（d/h/m）で指定できるように変更する
+100301 2025-11-24 GetEventQuestRoomsByApi()をGetEventRoomsByApi()に変更する
+100302 2025-11-25 eventuserテーブルに登録後、userテーブルに存在しないuseridを新規登録する機能を追加する
 */
 
-const Version = "100201"
+const Version = "100302"
 
 // イベントの参加者を調べ、一定数以下ならDB(eventuser)に登録する
 func main() {
@@ -79,6 +82,17 @@ func main() {
 	AddTableWithName()
 	// --------------------------------
 
+	// userテーブルの更新判定の閾値、ApiRoomProfile()の実行頻度を設定する
+	fileenv := "Env.yml"
+	err = exsrapi.LoadConfig(fileenv, &srdblib.Env)
+	if err != nil {
+		err = fmt.Errorf("exsrapi.Loadconfig(): %w", err)
+		log.Printf("%s\n", err.Error())
+		return
+	}
+	log.Printf("Env.yml: %+v\n", srdblib.Env)
+	// --------------------------------
+
 	/// 環境変数から設定値を取得する
 	snorooms := os.Getenv("SR_ADD_EVENTUSER_NOROOMS")
 	norooms, _ := strconv.Atoi(snorooms)
@@ -105,11 +119,23 @@ func main() {
 	*/
 
 	// 現在開催中のイベントの参加者をDBに登録する
-	CollectAndAddEventUsers(
+	err = CollectAndAddEventUsers(
 		http.DefaultClient,
 		norooms,
 		dtago,
 		dtfromnow,
 	)
+	if err != nil {
+		log.Printf("CollectAndAddEventUsers error: %v\n", err)
+		return
+	}
 
+	// 追加されたuseridがuserテーブルに存在しないときは新規登録する
+	err = SearchAndAddNewUsers(3) // 3時間以内に始まるイベントも対象とする
+	if err != nil {
+		log.Printf("SearchAndAddNewUsers error: %v\n", err)
+		return
+	}
+	// --------------------------------
+	log.Printf("End\n")
 }
