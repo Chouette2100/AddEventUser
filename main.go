@@ -25,9 +25,10 @@ import (
 100201 2025-11-23 時間指定を時間単位（d/h/m）で指定できるように変更する
 100301 2025-11-24 GetEventQuestRoomsByApi()をGetEventRoomsByApi()に変更する
 100302 2025-11-25 eventuserテーブルに登録後、userテーブルに存在しないuseridを新規登録する機能を追加する
+100303 2025-11-25 CollectAndAddEventUsers()でaddNewUser()のエラーがmain()に持ち出されないようにする
 */
 
-const Version = "100302"
+const Version = "100303"
 
 // イベントの参加者を調べ、一定数以下ならDB(eventuser)に登録する
 func main() {

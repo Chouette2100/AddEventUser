@@ -130,6 +130,7 @@ func CollectAndAddEventUsers(
 		)
 		if err != nil {
 			log.Printf("addNewUser(): %s", err.Error())
+			err = nil
 		}
 	}
 
