@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-gorp/gorp"
 
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 func TestGetEventuserList(t *testing.T) {
@@ -64,7 +64,7 @@ func TestGetEventuserList(t *testing.T) {
 	// DB接続
 	var err error
 	var dbconfig *srdblib.DBConfig
-	dbconfig, err = srdblib.OpenDb("DBConfig.yml")
+	Db, dbconfig, err = srdblib.OpenDb("DBConfig.yml")
 	if err != nil {
 		log.Printf("Database error. err = %v\n", err)
 		return
@@ -72,18 +72,18 @@ func TestGetEventuserList(t *testing.T) {
 	if dbconfig.UseSSH {
 		defer srdblib.Dialer.Close()
 	}
-	defer srdblib.Db.Close()
-	srdblib.Db.SetMaxOpenConns(8)
-	srdblib.Db.SetMaxIdleConns(12)
+	defer Db.Close()
+	Db.SetMaxOpenConns(8)
+	Db.SetMaxIdleConns(12)
 
-	srdblib.Db.SetConnMaxLifetime(time.Minute * 5)
-	srdblib.Db.SetConnMaxIdleTime(time.Minute * 5)
+	Db.SetConnMaxLifetime(time.Minute * 5)
+	Db.SetConnMaxIdleTime(time.Minute * 5)
 
-	defer srdblib.Db.Close()
+	defer Db.Close()
 	log.Printf("%+v\n", dbconfig)
 
 	dial := gorp.MySQLDialect{Engine: "InnoDB", Encoding: "utf8mb4"}
-	srdblib.Dbmap = &gorp.DbMap{Db: srdblib.Db,
+	Dbmap = &gorp.DbMap{Db: Db,
 		Dialect:         dial,
 		ExpandSliceArgs: true, //スライス引数展開オプションを有効化する
 	}

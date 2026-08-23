@@ -18,7 +18,7 @@ import (
 	// "golang.org/x/tools/go/analysis/passes/defers"
 
 	// "github.com/Chouette2100/srapi/v2"
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 // イベント参加者をDBに登録する

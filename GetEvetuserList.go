@@ -17,7 +17,7 @@ import (
 	// "golang.org/x/tools/go/analysis/passes/defers"
 
 	"github.com/Chouette2100/srapi/v2"
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 type EventuserList []srdblib.Eventuser
@@ -39,9 +39,9 @@ func GetEventuserList(
 	// DBからイベント情報を取得する
 	eventinfo := srdblib.Event{}
 	// var intf interface{}
-	intf, erl := srdblib.Dbmap.Get(&eventinfo, event.Eventid)
+	intf, erl := Dbmap.Get(&eventinfo, event.Eventid)
 	if erl != nil {
-		err = fmt.Errorf("srdblib.Dbmap.Get(): %w", err)
+		err = fmt.Errorf("Dbmap.Get(): %w", err)
 		return
 	}
 	if intf == nil {
@@ -69,8 +69,13 @@ func GetEventuserList(
 	}
 
 	// イベント参加者リストを取得する
+	leua := 1
 	eua := strings.Split(event.Eventid, "?block_id=")
-	if len(eua) == 2 {
+	leua = len(eua)
+// if eua[0] == "schoolaward26_start_b" {
+//		leua = 1
+//	}
+	if leua == 2 {
 		// ブロックイベントのとき
 		if event.Starttime.After(time.Now()) {
 			err = fmt.Errorf("ブロックイベントがまだ開始されていません。eventid=%s starttime=%s",
@@ -93,7 +98,7 @@ func GetEventuserList(
 		// イベント参加者数を取得する
 		NoOfRooms = ebr.Total_entries
 		eventinfo.Noentry = NoOfRooms
-		srdblib.Dbmap.Update(&eventinfo)
+		Dbmap.Update(&eventinfo)
 
 		eua := make([]srdblib.Eventuser, len(ebr.Block_ranking_list))
 		for i, br := range ebr.Block_ranking_list {
@@ -120,7 +125,7 @@ func GetEventuserList(
 		// イベント参加者数を取得する
 		NoOfRooms = eqr.TotalEntries
 		eventinfo.Noentry = NoOfRooms
-		srdblib.Dbmap.Update(&eventinfo)
+		Dbmap.Update(&eventinfo)
 
 		// eua := make([]srdblib.Eventuser, len(eqr.EventQuestLevelRanges[0].Rooms))
 		// for i, qr := range eqr.EventQuestLevelRanges[0].Rooms {

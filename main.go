@@ -12,12 +12,15 @@ import (
 	"strconv"
 	"time"
 
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/go-gorp/gorp"
 	"golang.org/x/term"
 
 	"github.com/Chouette2100/exsrapi/v2"
 	"github.com/Chouette2100/srapi/v2"
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 /*
@@ -27,9 +30,14 @@ import (
 100302 2025-11-25 eventuserテーブルに登録後、userテーブルに存在しないuseridを新規登録する機能を追加する
 100303 2025-11-25 CollectAndAddEventUsers()でaddNewUser()のエラーがmain()に持ち出されないようにする
 100304 2025-11-29 ログ出力書式を変更する
+100400 2026-08-23 sops暗号化に対応する, srdblibのバージョンをv3に変更する, srdblib.DbmapをDbmapに変更する
 */
 
-const Version = "100304"
+const Version = "100400"
+
+var Db *sql.DB
+var Dbmap *gorp.DbMap
+
 
 // イベントの参加者を調べ、一定数以下ならDB(eventuser)に登録する
 func main() {
@@ -58,7 +66,7 @@ func main() {
 
 	// DB接続
 	var dbconfig *srdblib.DBConfig
-	dbconfig, err = srdblib.OpenDb("DBConfig.yml")
+	Db, dbconfig, err = srdblib.OpenDb("DBConfig.enc.yml")
 	if err != nil {
 		log.Printf("Database error. err = %v\n", err)
 		return
@@ -66,18 +74,18 @@ func main() {
 	if dbconfig.UseSSH {
 		defer srdblib.Dialer.Close()
 	}
-	defer srdblib.Db.Close()
-	srdblib.Db.SetMaxOpenConns(8)
-	srdblib.Db.SetMaxIdleConns(12)
+	defer Db.Close()
+	Db.SetMaxOpenConns(8)
+	Db.SetMaxIdleConns(12)
 
-	srdblib.Db.SetConnMaxLifetime(time.Minute * 5)
-	srdblib.Db.SetConnMaxIdleTime(time.Minute * 5)
+	Db.SetConnMaxLifetime(time.Minute * 5)
+	Db.SetConnMaxIdleTime(time.Minute * 5)
 
-	defer srdblib.Db.Close()
-	log.Printf("%+v\n", dbconfig)
+	defer Db.Close()
+	// log.Printf("%+v\n", dbconfig)
 
 	dial := gorp.MySQLDialect{Engine: "InnoDB", Encoding: "utf8mb4"}
-	srdblib.Dbmap = &gorp.DbMap{Db: srdblib.Db,
+	Dbmap = &gorp.DbMap{Db: Db,
 		Dialect:         dial,
 		ExpandSliceArgs: true, //スライス引数展開オプションを有効化する
 	}

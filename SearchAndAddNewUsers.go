@@ -36,7 +36,7 @@ func SearchAndAddNewUsers(
 		AND NOW() BETWEEN DATE_SUB(e.starttime, INTERVAL ? HOUR) AND e.endtime
 	`
 
-	_, err = srdblib.Dbmap.Select(&newUsers, sqlst, hoursAhead)
+	_, err = Dbmap.Select(&newUsers, sqlst, hoursAhead)
 	if err != nil {
 		err = fmt.Errorf("新規ユーザー抽出エラー: %w", err)
 		return

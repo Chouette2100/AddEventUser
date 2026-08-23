@@ -18,7 +18,7 @@ import (
 	// "golang.org/x/tools/go/analysis/passes/defers"
 
 	// "github.com/Chouette2100/srapi/v2"
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 const sqlUpsertPoints = "INSERT INTO points ( ts, user_id, eventid,  point, `rank`, gap, pstatus) " +
@@ -35,7 +35,7 @@ func UpsertInitialPoints(
 ) {
 
 	var result sql.Result
-	result, err = srdblib.Dbmap.Exec(
+	result, err = Dbmap.Exec(
 		sqlUpsertPoints,
 		tstarttime,
 		eu.Userno,

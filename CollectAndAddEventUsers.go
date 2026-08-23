@@ -12,7 +12,7 @@ import (
 
 	"net/http"
 
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 // parseTimeInterval は "120m", "2h", "3d", "-30m", "-3d" のような文字列を解析し、
@@ -105,7 +105,7 @@ func CollectAndAddEventUsers(
 	}
 
 	eventinflist := []srdblib.Event{}
-	_, erl := srdblib.Dbmap.Select(&eventinflist, sqlst)
+	_, erl := Dbmap.Select(&eventinflist, sqlst)
 	if erl != nil {
 		err = fmt.Errorf("Dbmap.Exec(): %w", erl)
 		return
