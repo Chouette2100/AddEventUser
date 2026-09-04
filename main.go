@@ -31,9 +31,10 @@ import (
 100303 2025-11-25 CollectAndAddEventUsers()でaddNewUser()のエラーがmain()に持ち出されないようにする
 100304 2025-11-29 ログ出力書式を変更する
 100400 2026-08-23 sops暗号化に対応する, srdblibのバージョンをv3に変更する, srdblib.DbmapをDbmapに変更する
+100401 2026-08-25 srdblibのバージョンをv3に統一する。
 */
 
-const Version = "100400"
+const Version = "100401"
 
 var Db *sql.DB
 var Dbmap *gorp.DbMap

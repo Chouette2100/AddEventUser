@@ -15,7 +15,7 @@
             "env": {
                 "SOPS_AGE_KEY_FILE": "/home/chouette/.config/age/key2.txt",
                 "SR_ADD_EVENTUSER_NOROOMS": "40",
-                "SR_ADD_EVENTUSER_DTAGO": "48h",
+                "SR_ADD_EVENTUSER_DTAGO": "12h",
                 "SR_ADD_EVENTUSER_DTFROMNOW": "15m",
                 "DBHOST": "127.0.0.1",
                 // "DBPORT": "9998",

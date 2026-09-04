@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Chouette2100/srdblib/v2"
+	"github.com/Chouette2100/srdblib/v3"
 )
 
 // SearchAndAddNewUsers は、指定された時間内に開始するイベントの参加者を調べ、
@@ -48,7 +48,7 @@ func SearchAndAddNewUsers(
 	user := srdblib.User{}
 	for _, nu := range newUsers {
 		user.Userno = nu.Userno
-		_, err = srdblib.UpinsUser(http.DefaultClient, time.Now().Truncate(time.Second), &user)
+		_, err = srdblib.UpinsUser(Dbmap, http.DefaultClient, time.Now().Truncate(time.Second), &user)
 		if err != nil {
 			err = fmt.Errorf("ユーザー新規登録エラー: userno=%d: %w", nu.Userno, err)
 			return
